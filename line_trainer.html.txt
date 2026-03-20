@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<title>Line Trainer PRO</title>
+<style>
+  body { font-family: Arial; text-align: center; background: #111; color: white; }
+  h1 { margin-top: 20px; }
+  .buttons { margin: 20px; }
+  button {
+    margin: 5px;
+    padding: 15px 20px;
+    font-size: 18px;
+    cursor: pointer;
+    border-radius: 10px;
+    border: none;
+  }
+  .player { background: #333; color: white; }
+  .action { background: orange; color: black; }
+</style>
+</head>
+<body>
+
+<h1>🏉 Line Trainer PRO</h1>
+<h2 id="canto">Tocá "Nueva Jugada"</h2>
+<h3 id="resultado"></h3>
+<h3 id="puntos">Puntos: 0</h3>
+
+<div class="buttons" id="players"></div>
+
+<button class="action" onclick="nuevaJugada()">Nueva Jugada</button>
+
+<script>
+let lineSize = 7; // cambiar 5,6,7
+let secuenciaCorrecta = [];
+let secuenciaUsuario = [];
+let puntos = 0;
+let tipoJugada = "normal";
+
+// crear botones
+const playersDiv = document.getElementById("players");
+for (let i = 1; i <= 8; i++) {
+  let btn = document.createElement("button");
+  btn.innerText = i;
+  btn.className = "player";
+  btn.onclick = () => clickJugador(i);
+  playersDiv.appendChild(btn);
+}
+
+function nuevaJugada() {
+  secuenciaUsuario = [];
+
+  if (lineSize === 7) {
+    let n1 = Math.floor(Math.random() * 9) + 1;
+    let finales = [7,3,5];
+    let final = finales[Math.floor(Math.random()*finales.length)];
+    document.getElementById("canto").innerText = "Canto: " + n1 + final;
+    tipoJugada = "normal";
+
+    if (final === 7) secuenciaCorrecta = [2];
+    if (final === 3) secuenciaCorrecta = [4];
+    if (final === 5) secuenciaCorrecta = [6];
+  }
+
+  else if (lineSize === 6) {
+    let n1 = Math.floor(Math.random() * 9) + 1;
+    let finales = [7,3,5];
+    let final = finales[Math.floor(Math.random()*finales.length)];
+    document.getElementById("canto").innerText = "Canto: " + n1 + final;
+    tipoJugada = "normal";
+
+    if (final === 7) secuenciaCorrecta = [2];
+    if (final === 3) secuenciaCorrecta = [4];
+    if (final === 5) secuenciaCorrecta = [5];
+  }
+
+  else if (lineSize === 5) {
+    let tipos = ["par","impar","callado","gonella","mosqui"];
+    let tipo = tipos[Math.floor(Math.random()*tipos.length)];
+
+    if (tipo === "par") {
+      let pares = [2,4,6,8];
+      let n = pares[Math.floor(Math.random()*pares.length)];
+      document.getElementById("canto").innerText = "Canto: " + n;
+      secuenciaCorrecta = [2];
+      tipoJugada = "normal";
+    }
+
+    if (tipo === "impar") {
+      let impares = [1,3,5,7,9];
+      let n = impares[Math.floor(Math.random()*impares.length)];
+      document.getElementById("canto").innerText = "Canto: " + n;
+      secuenciaCorrecta = [4];
+      tipoJugada = "normal";
+    }
+
+    if (tipo === "callado") {
+      document.getElementById("canto").innerText = "CALLADO";
+      secuenciaCorrecta = [3];
+      tipoJugada = "normal";
+    }
+
+    if (tipo === "gonella") {
+      document.getElementById("canto").innerText = "GONELLA";
+      secuenciaCorrecta = [3,2];
+      tipoJugada = "especial";
+    }
+
+    if (tipo === "mosqui") {
+      document.getElementById("canto").innerText = "MOSQUI";
+      secuenciaCorrecta = [2,3];
+      tipoJugada = "especial";
+    }
+  }
+
+  document.getElementById("resultado").innerText = "";
+}
+
+function clickJugador(num) {
+  secuenciaUsuario.push(num);
+
+  if (secuenciaUsuario.length === secuenciaCorrecta.length) {
+    if (JSON.stringify(secuenciaUsuario) === JSON.stringify(secuenciaCorrecta)) {
+      if (tipoJugada === "especial") {
+        puntos += 2;
+        document.getElementById("resultado").innerText = "✔️ bien (x2)";
+      } else {
+        puntos += 1;
+        document.getElementById("resultado").innerText = "✔️ bien";
+      }
+    } else {
+      puntos -= 1;
+      document.getElementById("resultado").innerText = "❌ mal (" + secuenciaCorrecta + ")";
+    }
+
+    document.getElementById("puntos").innerText = "Puntos: " + puntos;
+  }
+}
+</script>
+
+</body>
+</html>
